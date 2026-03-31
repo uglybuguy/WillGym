@@ -1,24 +1,17 @@
 {
-  "name": "WillGym Cloud",
-  "short_name": "WillGym",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color": "#020617",
-  "theme_color": "#6366f1",
-  "icons": [
-    {
-      "src": "https://cdn-icons-png.flaticon.com/512/2964/2964514.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+"short_name": "WillGym",
+"name": "WillGym Pro Training",
+"icons": [
+{
+"src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzYzNjZmMSI+PHBhdGggZD0iTTYsNVYxOUgzVjE1SDFVOUgzVjVINTZNMjMsOUgyMVY1SDE4VjE5SDIxVjE1SDIzVjlNMTcsMTFWMTNIN1YxMUgxN00xNyw3SDdWOUgxN1Y3TTE3LDE1SDdWMTdIMTdWMTVWIi8+PC9zdmc+",
+"type": "image/svg+xml",
+"sizes": "512x512",
+"purpose": "any maskable"
 }
-
-### ¿Cómo tener el icono en el móvil?
-1.  Abre el enlace de tu GitHub en Chrome.
-2.  Toca los 3 puntos y elige **"Instalar aplicación"**.
-3.  Ahora, en lugar del icono de Chrome, verás la mancuerna azul directamente en tu menú de apps.
-
-**Un detalle:** Como ahora los datos están en la nube, la primera vez que abras la app dirá "Conectando...". Una vez cargue, tus rutinas estarán ahí para siempre, sin importar si borras el caché de Chrome. 
-
-¿Quieres que probemos si el guardado en la nube te funciona correctamente?
+],
+"start_url": "./index.html",
+"background_color": "#020617",
+"display": "standalone",
+"scope": "./",
+"theme_color": "#020617"
+}
