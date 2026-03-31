@@ -4,9 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>WillGym Pro</title>
-<link rel="manifest" href="manifest.json">
+<!-- ESTO ES LO QUE FUERZA EL ICONO EN IPHONE Y ANDROID -->
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/will-gym/assets/main/icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WillGym">
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#020617">
 
 <script src="https://cdn.tailwindcss.com"></script>
@@ -45,11 +48,11 @@
 <script>
     const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
     let activeDay = DAYS[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1];
-    let db = JSON.parse(localStorage.getItem('willgym_v8_stable') || '{}');
+    let db = JSON.parse(localStorage.getItem('willgym_v9_stable') || '{}');
     DAYS.forEach(d => { if(!db[d]) db[d] = { groups: [] }; });
 
     function save() {
-        localStorage.setItem('willgym_v8_stable', JSON.stringify(db));
+        localStorage.setItem('willgym_v9_stable', JSON.stringify(db));
         render();
     }
 
@@ -79,7 +82,7 @@
 
     window.updateSet = (gi, ei, si, k, v) => {
         db[activeDay].groups[gi].exercises[ei].sets[si][k] = v;
-        localStorage.setItem('willgym_v8_stable', JSON.stringify(db));
+        localStorage.setItem('willgym_v9_stable', JSON.stringify(db));
     };
 
     function render() {
@@ -144,4 +147,5 @@
 </script>
 
 </body>
-</html>
+                    </html>
+    
