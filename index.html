@@ -5,118 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#6366f1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>WillGym</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Cargamos iconos con respaldo -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            -webkit-tap-highlight-color: transparent; 
             background-color: #020617; 
             color: #f8fafc; 
-            user-select: none;
-            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
         }
         .logo-font { font-family: 'Orbitron', sans-serif; }
-        .hide-scroll::-webkit-scrollbar { display: none; }
-        
         .day-btn.active { 
             background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
             color: white; 
-            border-color: #818cf8;
-            transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
         }
-
         .group-card {
-            background: linear-gradient(180deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.9) 100%);
+            background: rgba(30, 41, 59, 0.6);
             border: 1px solid rgba(79, 70, 229, 0.2);
-            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding: 1.25rem;
         }
-
-        input, textarea { user-select: text; }
-        
-        .fade-in-up {
-            animation: fadeInUp 0.4s ease-out;
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .hide-scroll::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden">
+<body>
 
-    <header class="p-6 pt-12 bg-slate-950 border-b border-indigo-900/30 shadow-2xl z-20">
+    <header class="p-6 pt-12 bg-slate-950 border-b border-indigo-900/30">
         <div class="flex items-center gap-3 mb-6">
-            <!-- Icono Mancuerna -->
-            <svg viewBox="0 0 24 24" class="w-10 h-10 fill-indigo-500 drop-shadow-[0_0_8px_rgba(99,102,241,0.6)]">
+            <svg viewBox="0 0 24 24" class="w-8 h-8 fill-indigo-500">
                 <path d="M6,5V19H3V15H1V9H3V5H6M23,9H21V5H18V19H21V15H23V9M17,11V13H7V11H17M17,7H7V9H17V7M17,15H7V17H17V15Z" />
             </svg>
-            <h1 class="text-2xl font-900 logo-font italic tracking-tighter text-white uppercase">
+            <h1 class="text-xl font-900 logo-font italic tracking-tighter uppercase">
                 WILL<span class="text-indigo-500">GYM</span>
             </h1>
         </div>
         
-        <div class="flex gap-2 overflow-x-auto hide-scroll py-2" id="day-tabs"></div>
+        <div class="flex gap-2 overflow-x-auto hide-scroll" id="day-tabs"></div>
     </header>
 
-    <main class="flex-1 overflow-y-auto p-4 space-y-8 pb-36" id="main-container"></main>
+    <main class="flex-1 overflow-y-auto p-4 pb-32" id="main-container"></main>
 
-    <footer class="fixed bottom-0 left-0 right-0 p-5 bg-slate-950/90 backdrop-blur-xl border-t border-slate-800 z-30">
-        <div class="max-w-md mx-auto">
-            <button id="add-group" class="w-full bg-indigo-600 hover:bg-indigo-500 py-4 rounded-2xl font-800 flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 active:scale-95 transition-all uppercase tracking-widest text-sm text-white">
-                <i class="ph-bold ph-plus-circle text-xl"></i> Añadir Grupo Muscular
-            </button>
-        </div>
+    <footer class="fixed bottom-0 left-0 right-0 p-5 bg-slate-950/90 border-t border-slate-800">
+        <button id="btn-add-group" class="w-full bg-indigo-600 py-4 rounded-xl font-bold uppercase tracking-widest text-sm text-white shadow-lg active:scale-95 transition-transform">
+            + Añadir Grupo Muscular
+        </button>
     </footer>
 
-    <script id="my-manifest" type="application/json">
-    {
-        "name": "WillGym Tracker",
-        "short_name": "WillGym",
-        "start_url": ".",
-        "display": "standalone",
-        "background_color": "#020617",
-        "theme_color": "#6366f1",
-        "icons": [
-            {
-                "src": "https://cdn-icons-png.flaticon.com/512/2964/2964514.png",
-                "sizes": "512x512",
-                "type": "image/png"
-            }
-        ]
-    }
-    </script>
-
     <script>
-        // Inyectar Manifest
-        const manifestContent = document.getElementById('my-manifest').textContent;
-        const blob = new Blob([manifestContent], {type: 'application/json'});
-        const manifestURL = URL.createObjectURL(blob);
-        const link = document.createElement('link');
-        link.rel = 'manifest';
-        link.href = manifestURL;
-        document.head.appendChild(link);
-
         const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
         let activeDay = DAYS[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1];
         
-        let db = JSON.parse(localStorage.getItem('willgym_v4') || '{}');
+        // Carga de datos con manejo de errores
+        let db = {};
+        try {
+            const saved = localStorage.getItem('willgym_v5');
+            db = saved ? JSON.parse(saved) : {};
+        } catch(e) { db = {}; }
+
         DAYS.forEach(d => { if (!db[d]) db[d] = { groups: [] }; });
 
-        function save() { localStorage.setItem('willgym_v4', JSON.stringify(db)); }
+        function save() { localStorage.setItem('willgym_v5', JSON.stringify(db)); }
 
         function renderDayTabs() {
             const tabs = document.getElementById('day-tabs');
             tabs.innerHTML = '';
             DAYS.forEach(d => {
                 const btn = document.createElement('button');
-                btn.className = `day-btn flex-shrink-0 px-5 py-2.5 rounded-xl text-xs font-bold border border-slate-800 transition-all ${activeDay === d ? 'active' : 'bg-slate-900 text-slate-500'}`;
+                btn.className = `flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-bold border border-slate-800 transition-all ${activeDay === d ? 'active' : 'bg-slate-900 text-slate-500'}`;
                 btn.innerText = d.toUpperCase();
                 btn.onclick = () => { activeDay = d; renderContent(); };
                 tabs.appendChild(btn);
@@ -129,92 +95,82 @@
             container.innerHTML = '';
             const dayData = db[activeDay];
 
-            if (dayData.groups.length === 0) {
-                container.innerHTML = `<div class="flex flex-col items-center justify-center py-24 text-slate-600 opacity-40"><i class="ph ph-barbell text-7xl mb-4"></i><p class="text-sm font-bold uppercase tracking-widest">Día de descanso</p></div>`;
-            }
-
-            dayData.groups.forEach((group, gIdx) => {
-                const groupEl = document.createElement('section');
-                groupEl.className = "group-card rounded-[2.5rem] p-6 space-y-6 shadow-2xl fade-in-up mb-6";
-                groupEl.innerHTML = `
-                    <div class="flex justify-between items-center gap-4">
-                        <div class="flex items-center gap-2 flex-1">
-                            <div class="w-1.5 h-6 bg-indigo-500 rounded-full"></div>
-                            <input type="text" value="${group.name}" placeholder="GRUPO MUSCULAR" onchange="updateGroupName(${gIdx}, this.value)" class="bg-transparent text-xl font-900 text-white outline-none w-full uppercase tracking-tighter">
+            if (!dayData.groups || dayData.groups.length === 0) {
+                container.innerHTML = `<div class="text-center py-20 text-slate-600 uppercase text-xs font-bold tracking-widest opacity-50">Día de descanso</div>`;
+            } else {
+                dayData.groups.forEach((group, gIdx) => {
+                    const section = document.createElement('div');
+                    section.className = "group-card";
+                    section.innerHTML = `
+                        <div class="flex justify-between items-center mb-4">
+                            <input type="text" value="${group.name}" placeholder="GRUPO MUSCULAR" onchange="updateGroupName(${gIdx}, this.value)" class="bg-transparent text-lg font-bold text-white outline-none w-full uppercase">
+                            <button onclick="removeGroup(${gIdx})" class="text-slate-500 px-2 font-bold">✕</button>
                         </div>
-                        <button onclick="removeGroup(${gIdx})" class="text-slate-600 p-2"><i class="ph-bold ph-trash"></i></button>
-                    </div>
-                    <div class="space-y-6" id="exercises-${gIdx}"></div>
-                    <button onclick="addExercise(${gIdx})" class="w-full py-4 rounded-2xl border-2 border-dashed border-slate-700 text-slate-500 font-bold text-[10px] uppercase tracking-widest">+ Ejercicio</button>
-                `;
-
-                const exContainer = groupEl.querySelector(`#exercises-${gIdx}`);
-                group.exercises.forEach((ex, exIdx) => {
-                    const exCard = document.createElement('div');
-                    exCard.className = "bg-slate-900/40 rounded-3xl border border-slate-800/50 p-4 space-y-4";
-                    let setsHtml = ex.sets.map((set, sIdx) => `
-                        <div class="grid grid-cols-12 gap-2 items-center bg-slate-950/50 p-2 rounded-xl border border-slate-800/30">
-                            <span class="col-span-1 text-[10px] font-black text-indigo-500/50">${sIdx + 1}</span>
-                            <div class="col-span-4 flex items-center bg-slate-900 rounded-lg px-2 border border-slate-700/20">
-                                <input type="number" inputmode="decimal" value="${set.w}" onchange="updateSet(${gIdx}, ${exIdx}, ${sIdx}, 'w', this.value)" class="bg-transparent w-full text-center py-2 text-sm font-bold outline-none text-indigo-300">
-                                <span class="text-[8px] text-slate-600 font-bold">KG</span>
-                            </div>
-                            <div class="col-span-4 flex items-center bg-slate-900 rounded-lg px-2 border border-slate-700/20">
-                                <input type="number" inputmode="numeric" value="${set.r}" onchange="updateSet(${gIdx}, ${exIdx}, ${sIdx}, 'r', this.value)" class="bg-transparent w-full text-center py-2 text-sm font-bold outline-none text-white">
-                                <span class="text-[8px] text-slate-600 font-bold">REPS</span>
-                            </div>
-                            <button onclick="removeSet(${gIdx}, ${exIdx}, ${sIdx})" class="col-span-3 text-slate-700 text-right pr-2"><i class="ph ph-minus-circle text-lg"></i></button>
-                        </div>
-                    `).join('');
-
-                    exCard.innerHTML = `
-                        <div class="flex justify-between items-center gap-2">
-                            <input type="text" value="${ex.name}" placeholder="Ejercicio..." onchange="updateExName(${gIdx}, ${exIdx}, this.value)" class="bg-transparent font-800 text-slate-100 outline-none w-full uppercase text-sm tracking-tight">
-                            <button onclick="removeExercise(${gIdx}, ${exIdx})" class="text-slate-800"><i class="ph ph-trash"></i></button>
-                        </div>
-                        <div class="space-y-2">${setsHtml}</div>
-                        <button onclick="addSet(${gIdx}, ${exIdx})" class="w-full py-2 bg-slate-800/50 rounded-xl text-[9px] font-black text-indigo-400 uppercase tracking-widest">+ Serie</button>
-                        <textarea onchange="updateExNotes(${gIdx}, ${exIdx}, this.value)" placeholder="Anotaciones..." class="w-full bg-slate-950/30 border border-slate-800/50 rounded-xl p-3 text-[11px] text-slate-400 outline-none h-14 resize-none">${ex.notes || ''}</textarea>
+                        <div id="ex-list-${gIdx}" class="space-y-4 mb-4"></div>
+                        <button onclick="addExercise(${gIdx})" class="w-full py-2 rounded-lg border border-dashed border-slate-700 text-slate-500 text-[10px] font-bold uppercase tracking-widest">+ Ejercicio</button>
                     `;
-                    exContainer.appendChild(exCard);
+
+                    const exList = section.querySelector(`#ex-list-${gIdx}`);
+                    group.exercises.forEach((ex, exIdx) => {
+                        const exDiv = document.createElement('div');
+                        exDiv.className = "bg-slate-900/50 p-3 rounded-xl border border-slate-800";
+                        
+                        let setsHtml = (ex.sets || []).map((set, sIdx) => `
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-[10px] font-bold text-indigo-500">${sIdx+1}</span>
+                                <input type="number" value="${set.w}" onchange="updateSet(${gIdx}, ${exIdx}, ${sIdx}, 'w', this.value)" class="w-20 bg-slate-800 text-center py-1 rounded text-sm text-indigo-300 outline-none">
+                                <span class="text-[8px] text-slate-500">KG</span>
+                                <input type="number" value="${set.r}" onchange="updateSet(${gIdx}, ${exIdx}, ${sIdx}, 'r', this.value)" class="w-16 bg-slate-800 text-center py-1 rounded text-sm text-white outline-none">
+                                <span class="text-[8px] text-slate-500">REPS</span>
+                                <button onclick="removeSet(${gIdx}, ${exIdx}, ${sIdx})" class="ml-auto text-slate-700 font-bold">✕</button>
+                            </div>
+                        `).join('');
+
+                        exDiv.innerHTML = `
+                            <div class="flex justify-between mb-2">
+                                <input type="text" value="${ex.name}" placeholder="Ejercicio" onchange="updateExName(${gIdx}, ${exIdx}, this.value)" class="bg-transparent font-bold text-white outline-none text-xs w-full uppercase">
+                                <button onclick="removeExercise(${gIdx}, ${exIdx})" class="text-slate-700 text-xs font-bold">ELIMINAR</button>
+                            </div>
+                            <div class="space-y-1">${setsHtml}</div>
+                            <button onclick="addSet(${gIdx}, ${exIdx})" class="w-full mt-2 py-1 bg-slate-800 rounded text-[9px] font-bold text-indigo-400 uppercase tracking-widest">+ Serie</button>
+                            <textarea onchange="updateExNotes(${gIdx}, ${exIdx}, this.value)" placeholder="Anotaciones..." class="w-full mt-2 bg-slate-950/50 border border-slate-800 rounded p-2 text-[10px] text-slate-400 outline-none h-12 resize-none">${ex.notes || ''}</textarea>
+                        `;
+                        exList.appendChild(exDiv);
+                    });
+                    container.appendChild(section);
                 });
-                container.appendChild(groupEl);
-            });
+            }
         }
 
-        document.getElementById('add-group').onclick = () => { db[activeDay].groups.push({ name: '', exercises: [] }); renderContent(); save(); };
-        window.updateGroupName = (gIdx, val) => { db[activeDay].groups[gIdx].name = val; save(); };
-        window.removeGroup = (gIdx) => { if(confirm('¿Eliminar grupo?')) { db[activeDay].groups.splice(gIdx, 1); renderContent(); save(); } };
-        window.addExercise = (gIdx) => { db[activeDay].groups[gIdx].exercises.push({ name: '', sets: [{ w: 0, r: 0 }], notes: '' }); renderContent(); save(); };
-        window.updateExName = (gIdx, exIdx, val) => { db[activeDay].groups[gIdx].exercises[exIdx].name = val; save(); };
-        window.updateExNotes = (gIdx, exIdx, val) => { db[activeDay].groups[gIdx].exercises[exIdx].notes = val; save(); };
-        window.addSet = (gIdx, exIdx) => {
-            const ex = db[activeDay].groups[gIdx].exercises[exIdx];
-            const lastSet = ex.sets.at(-1);
-            ex.sets.push({ w: lastSet ? lastSet.w : 0, r: lastSet ? lastSet.r : 0 });
-            renderContent(); save();
+        // Acciones globales (expuestas al window)
+        window.updateGroupName = (g, v) => { db[activeDay].groups[g].name = v; save(); };
+        window.removeGroup = (g) => { if(confirm('¿Eliminar?')){ db[activeDay].groups.splice(g, 1); renderContent(); save(); }};
+        window.addExercise = (g) => { db[activeDay].groups[g].exercises.push({ name: '', sets: [{ w: 0, r: 0 }], notes: '' }); renderContent(); save(); };
+        window.updateExName = (g, e, v) => { db[activeDay].groups[g].exercises[e].name = v; save(); };
+        window.updateExNotes = (g, e, v) => { db[activeDay].groups[g].exercises[e].notes = v; save(); };
+        window.addSet = (g, e) => { 
+            const ex = db[activeDay].groups[g].exercises[e];
+            const last = ex.sets.at(-1);
+            ex.sets.push({ w: last ? last.w : 0, r: last ? last.r : 0 });
+            renderContent(); save(); 
         };
-        window.updateSet = (gIdx, exIdx, sIdx, key, val) => { db[activeDay].groups[gIdx].exercises[exIdx].sets[sIdx][key] = val; save(); };
-        window.removeSet = (gIdx, exIdx, sIdx) => {
-            const sets = db[activeDay].groups[gIdx].exercises[exIdx].sets;
-            if (sets.length > 1) sets.splice(sIdx, 1);
-            else sets[0] = { w: 0, r: 0 };
-            renderContent(); save();
+        window.updateSet = (g, e, s, k, v) => { db[activeDay].groups[g].exercises[e].sets[s][k] = v; save(); };
+        window.removeSet = (g, e, s) => { 
+            const sets = db[activeDay].groups[g].exercises[e].sets;
+            if(sets.length > 1) sets.splice(s, 1);
+            renderContent(); save(); 
         };
-        window.removeExercise = (gIdx, exIdx) => { db[activeDay].groups[gIdx].exercises.splice(exIdx, 1); renderContent(); save(); };
+        window.removeExercise = (g, e) => { db[activeDay].groups[g].exercises.splice(e, 1); renderContent(); save(); };
 
-        // Service Worker Inline para Cache Offline Total
-        if ('serviceWorker' in navigator) {
-            const swSource = `
-                const CACHE = 'willgym-v1';
-                self.addEventListener('install', (e) => e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', './index.html']))));
-                self.addEventListener('fetch', (e) => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
-            `;
-            const swBlob = new Blob([swSource], {type: 'application/javascript'});
-            navigator.serviceWorker.register(URL.createObjectURL(swBlob));
-        }
+        // Botón principal
+        document.getElementById('btn-add-group').addEventListener('click', () => {
+            db[activeDay].groups.push({ name: '', exercises: [] });
+            renderContent();
+            save();
+        });
 
-        renderContent();
+        // Inicio
+        window.onload = renderContent;
     </script>
 </body>
 </html>
